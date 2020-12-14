@@ -1,0 +1,18 @@
+---
+# tasks file for set_firewall_rules
+
+- name: Allow incoming connections to {{ item.tcp_port }} tcp port
+  iptables:
+    chain: INPUT
+    action: insert
+    protocol: tcp
+    destination_port: "{{ item.tcp_port }}"
+    jump: ACCEPT
+
+- name: Allow outgoing connections from {{ item.tcp_port }} tcp port
+  iptables:
+    chain: OUTPUT
+    action: insert
+    protocol: tcp
+    source_port: "{{ item.tcp_port }}"
+    jump: ACCEPT

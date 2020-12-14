@@ -1,0 +1,14 @@
+---
+# handlers file for ftp_server_install
+
+- name: Enable service
+  service:
+    name: "{{ service_name }}"
+    enabled: yes
+    state: started
+
+- name: Restart service
+  service:
+    name: "{{ service_name }}"
+    enabled: yes
+    state: restarted

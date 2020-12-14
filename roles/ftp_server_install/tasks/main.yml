@@ -1,0 +1,41 @@
+---
+# tasks file for ftp_server_install
+
+- name: Install the {{ service_name }} package
+  yum:
+    name: "{{ service_name }}"
+    state: present
+  notify: Enable service
+
+- name: Create the {{ service_name }} configuration file from template
+  template:
+    src: vsftpd.conf.j2
+    dest: /etc/vsftpd/vsftpd.conf
+    owner: root
+    group: root
+    mode: '0600'
+  notify: Restart service
+
+- name: Set permissions for {{ ftp_anon_dir }} folder
+  file:
+    path: "{{ ftp_anon_dir }}"
+    owner: ftp
+    group: ftp
+    mode: '0755'
+
+- name: Set SElinux context for {{ ftp_anon_dir }}
+  sefcontext:
+    target: "{{ ftp_anon_dir }}"
+    setype: public_content_rw_t
+    state: present
+  register: selinux_context
+
+- name: Run restorecon for set SElinux context
+  command: restorecon "{{ ftp_anon_dir }}"
+  when: selinux_context.changed
+
+- name: Set allow_ftpd_anon_write flag on and keep it persistent across reboots
+  seboolean:
+    name: allow_ftpd_anon_write
+    state: yes
+    persistent: yes

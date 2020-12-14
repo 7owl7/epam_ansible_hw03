@@ -1,0 +1,11 @@
+service_name: vsftpd
+
+vsftpd_anon_upload_enable: YES
+vsftpd_anon_mkdir_write_enable: YES
+vsftpd_anonymous_enable: YES
+
+ftp_anon_dir: /var/ftp/pub
+
+fw_open_ports:
+  - tcp_port: 20
+  - tcp_port: 21
